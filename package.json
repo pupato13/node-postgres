@@ -1,20 +1,34 @@
 {
-  "name": "postgres",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pupato13/node-postgres.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pupato13/node-postgres/issues"
-  },
-  "homepage": "https://github.com/pupato13/node-postgres#readme"
+    "name": "postgres",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node dist/main/api",
+        "build": "rimraf dist && tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/pupato13/node-postgres.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/pupato13/node-postgres/issues"
+    },
+    "homepage": "https://github.com/pupato13/node-postgres#readme",
+    "devDependencies": {
+        "@types/module-alias": "^2.0.1",
+        "@types/node": "^16.10.1",
+        "typescript": "^4.4.3"
+    },
+    "engines": {
+        "node": "16.x"
+    },
+    "dependencies": {
+        "module-alias": "^2.2.2",
+        "rimraf": "^3.0.2"
+    }
 }
