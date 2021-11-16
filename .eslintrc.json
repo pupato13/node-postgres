@@ -10,6 +10,10 @@
         "quotes": "off",
         "indent": "off",
         "comma-dangle": "off",
-        "@typescript-eslint/indent": "off"
+        "@typescript-eslint/indent": "off",
+        "@typescript-eslint/member-delimiter-style": "off",
+        "@typescript-eslint/consistent-type-definitions": "off",
+        "@typescript-eslint/space-before-function-paren": "off",
+        "@typescript-eslint/no-namespace": "off"
     }
 }
