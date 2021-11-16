@@ -1,14 +1,22 @@
 import { ILoadFacebookUserApi } from "@/data/contracts/apis";
+import { ILoadUserAccountRepository } from "@/data/contracts/repos";
 import { AuthenticationError } from "@/domain/errors";
 import { IFacebookAuthentication } from "@/domain/features";
 
 export class FacebookAuthenticationService {
-    constructor(private readonly loadFacebookUserApi: ILoadFacebookUserApi) {}
+    constructor(
+        private readonly loadFacebookUserApi: ILoadFacebookUserApi,
+        private readonly loadUserAccountRepository: ILoadUserAccountRepository
+    ) {}
 
     async perform(
         params: IFacebookAuthentication.Params
     ): Promise<AuthenticationError> {
-        await this.loadFacebookUserApi.loadUser(params);
+        const fbData = await this.loadFacebookUserApi.loadUser(params);
+
+        if (fbData !== undefined) {
+            await this.loadUserAccountRepository.load({ email: fbData.email });
+        }
 
         return new AuthenticationError();
     }
