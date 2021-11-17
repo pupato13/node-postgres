@@ -17,30 +17,17 @@ namespace ILoadUserAccountRepository {
           };
 }
 
-export interface ICreateFacebookAccountRepository {
-    createFromFacebook: (
-        params: ICreateFacebookAccountRepository.Params,
+export interface ISaveFacebookAccountRepository {
+    saveWithFacebook: (
+        params: ISaveFacebookAccountRepository.Params,
     ) => Promise<void>;
 }
 
-namespace ICreateFacebookAccountRepository {
+namespace ISaveFacebookAccountRepository {
     export type Params = {
+        id?: string;
         name: string;
         email: string;
-        facebookId: string;
-    };
-}
-
-export interface IUpdateFacebookAccountRepository {
-    updateWithFacebook: (
-        params: IUpdateFacebookAccountRepository.Params,
-    ) => Promise<void>;
-}
-
-namespace IUpdateFacebookAccountRepository {
-    export type Params = {
-        id: string;
-        name: string;
         facebookId: string;
     };
 }
