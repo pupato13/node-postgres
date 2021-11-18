@@ -1,5 +1,5 @@
 export interface IHttpGetClient {
-    get: (params: IHttpGetClient.Params) => Promise<void>;
+    get: (params: IHttpGetClient.Params) => Promise<IHttpGetClient.Result>;
 }
 
 export namespace IHttpGetClient {
@@ -7,4 +7,6 @@ export namespace IHttpGetClient {
         url: string;
         params: object;
     };
+
+    export type Result = any;
 }
