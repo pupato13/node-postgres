@@ -8,7 +8,7 @@ import { AuthenticationError } from "@/domain/errors";
 import { IFacebookAuthentication } from "@/domain/features";
 import { AccessToken, FacebookAccount } from "@/domain/models";
 
-export class FacebookAuthenticationService {
+export class FacebookAuthenticationService implements IFacebookAuthentication {
     constructor(
         private readonly facebookApi: ILoadFacebookUserApi,
         private readonly userAccountRepo: ILoadUserAccountRepository &
@@ -18,7 +18,7 @@ export class FacebookAuthenticationService {
 
     async perform(
         params: IFacebookAuthentication.Params
-    ): Promise<AuthenticationError> {
+    ): Promise<IFacebookAuthentication.Result> {
         const fbData = await this.facebookApi.loadUser(params);
 
         if (fbData !== undefined) {
@@ -32,10 +32,12 @@ export class FacebookAuthenticationService {
                 fbAccount
             );
 
-            await this.crypto.generateToken({
+            const token = await this.crypto.generateToken({
                 key: id,
                 expirationInMs: AccessToken.expirationInMs,
             });
+
+            return new AccessToken(token);
         }
 
         return new AuthenticationError();
