@@ -3,6 +3,7 @@ import {
     ISaveFacebookAccountRepository,
     ILoadUserAccountRepository,
 } from "@/data/contracts/repos";
+import { ITokenGenerator } from "@/data/contracts/crypto";
 import { AuthenticationError } from "@/domain/errors";
 import { IFacebookAuthentication } from "@/domain/features";
 import { FacebookAccount } from "@/domain/models";
@@ -11,7 +12,8 @@ export class FacebookAuthenticationService {
     constructor(
         private readonly facebookApi: ILoadFacebookUserApi,
         private readonly userAccountRepo: ILoadUserAccountRepository &
-            ISaveFacebookAccountRepository
+            ISaveFacebookAccountRepository,
+        private readonly crypto: ITokenGenerator
     ) {}
 
     async perform(
@@ -26,7 +28,11 @@ export class FacebookAuthenticationService {
 
             const fbAccount = new FacebookAccount(fbData, accountData);
 
-            await this.userAccountRepo.saveWithFacebook(fbAccount);
+            const { id } = await this.userAccountRepo.saveWithFacebook(
+                fbAccount
+            );
+
+            await this.crypto.generateToken({ key: id });
         }
 
         return new AuthenticationError();
