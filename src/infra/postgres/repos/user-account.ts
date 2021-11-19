@@ -6,7 +6,7 @@ import {
 } from "@/data/contracts/repos";
 import { PgUser } from "@/infra/postgres/entities";
 
-export class PgUserAccountRepository implements ILoadUserAccountRepository {
+export class PgUserAccountRepository implements ILoadUserAccountRepository, ISaveFacebookAccountRepository {
     private readonly pgUserRepo = getRepository(PgUser);
 
     async load(
