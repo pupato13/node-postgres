@@ -1,10 +1,10 @@
 export interface ILoadUserAccountRepository {
     load: (
-        params: ILoadUserAccountRepository.Params
+        params: ILoadUserAccountRepository.Params,
     ) => Promise<ILoadUserAccountRepository.Result>;
 }
 
-namespace ILoadUserAccountRepository {
+export namespace ILoadUserAccountRepository {
     export type Params = {
         email: string;
     };
@@ -19,11 +19,11 @@ namespace ILoadUserAccountRepository {
 
 export interface ISaveFacebookAccountRepository {
     saveWithFacebook: (
-        params: ISaveFacebookAccountRepository.Params
+        params: ISaveFacebookAccountRepository.Params,
     ) => Promise<ISaveFacebookAccountRepository.Result>;
 }
 
-namespace ISaveFacebookAccountRepository {
+export namespace ISaveFacebookAccountRepository {
     export type Params = {
         id?: string;
         name: string;
