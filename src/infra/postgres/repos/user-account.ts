@@ -1,6 +1,9 @@
 import { getRepository } from "typeorm";
 
-import { ILoadUserAccountRepository } from "@/data/contracts/repos";
+import {
+    ILoadUserAccountRepository,
+    ISaveFacebookAccountRepository,
+} from "@/data/contracts/repos";
 import { PgUser } from "@/infra/postgres/entities";
 
 export class PgUserAccountRepository implements ILoadUserAccountRepository {
@@ -17,5 +20,17 @@ export class PgUserAccountRepository implements ILoadUserAccountRepository {
                 name: pgUser.name ?? undefined,
             };
         }
+    }
+
+    async saveWithFacebook(
+        params: ISaveFacebookAccountRepository.Params,
+    ): Promise<void> {
+        const pgUserRepo = getRepository(PgUser);
+
+        await pgUserRepo.save({
+            name: params.name,
+            email: params.email,
+            facebookId: params.facebookId,
+        });
     }
 }
