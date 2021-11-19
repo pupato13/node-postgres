@@ -1,46 +1,21 @@
-import { IBackup, newDb } from "pg-mem";
-import {
-    Column,
-    Entity,
-    getConnection,
-    getRepository,
-    PrimaryGeneratedColumn,
-    Repository,
-} from "typeorm";
+import { IBackup, IMemoryDb, newDb } from "pg-mem";
+import { getConnection, getRepository, Repository } from "typeorm";
 
-import { ILoadUserAccountRepository } from "@/data/contracts/repos";
+import { PgUser } from "@/infra/postgres/entities";
+import { PgUserAccountRepository } from "@/infra/postgres/repos";
 
-class PgUserAccountRepository implements ILoadUserAccountRepository {
-    async load(
-        params: ILoadUserAccountRepository.Params,
-    ): Promise<ILoadUserAccountRepository.Result> {
-        const pgUserRepo = getRepository(PgUser);
+const makeFakeDb = async (entities?: any[]): Promise<IMemoryDb> => {
+    const db = newDb();
+    const connection = await db.adapters.createTypeormConnection({
+        type: "postgres",
+        entities: entities ?? ["src/infra/postgres/entities/index.ts"],
+    });
 
-        const pgUser = await pgUserRepo.findOne({ email: params.email });
+    // create schema
+    await connection.synchronize();
 
-        if (pgUser !== undefined) {
-            return {
-                id: pgUser.id.toString(),
-                name: pgUser.name ?? undefined,
-            };
-        }
-    }
-}
-
-@Entity({ name: "usuarios" })
-export class PgUser {
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Column({ name: "nome", nullable: true })
-    name?: string;
-
-    @Column()
-    email!: string;
-
-    @Column({ name: "id_facebook", nullable: true })
-    facebookId?: string;
-}
+    return db;
+};
 
 describe("Pg UserAccountRepository", () => {
     describe("load", () => {
@@ -49,19 +24,14 @@ describe("Pg UserAccountRepository", () => {
         let backup: IBackup;
 
         beforeEach(() => {
+            // Restore the empty DB backup before each test
             backup.restore();
             sut = new PgUserAccountRepository();
         });
 
         beforeAll(async () => {
-            const db = newDb();
-            const connection = await db.adapters.createTypeormConnection({
-                type: "postgres",
-                entities: [PgUser],
-            });
-
-            // create schema
-            await connection.synchronize();
+            const db = await makeFakeDb([PgUser]);
+            // Creates a backup with empty DB to restore it before each test
             backup = db.backup();
             pgUserRepo = getRepository(PgUser);
         });
