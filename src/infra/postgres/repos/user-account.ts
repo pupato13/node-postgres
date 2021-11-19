@@ -7,12 +7,12 @@ import {
 import { PgUser } from "@/infra/postgres/entities";
 
 export class PgUserAccountRepository implements ILoadUserAccountRepository {
+    private readonly pgUserRepo = getRepository(PgUser);
+
     async load(
         params: ILoadUserAccountRepository.Params,
     ): Promise<ILoadUserAccountRepository.Result> {
-        const pgUserRepo = getRepository(PgUser);
-
-        const pgUser = await pgUserRepo.findOne({ email: params.email });
+        const pgUser = await this.pgUserRepo.findOne({ email: params.email });
 
         if (pgUser !== undefined) {
             return {
@@ -24,17 +24,21 @@ export class PgUserAccountRepository implements ILoadUserAccountRepository {
 
     async saveWithFacebook(
         params: ISaveFacebookAccountRepository.Params,
-    ): Promise<void> {
-        const pgUserRepo = getRepository(PgUser);
+    ): Promise<ISaveFacebookAccountRepository.Result> {
+        let id: string;
 
         if (params.id === undefined) {
-            await pgUserRepo.save({
+            const pgUser = await this.pgUserRepo.save({
                 name: params.name,
                 email: params.email,
                 facebookId: params.facebookId,
             });
+
+            id = pgUser.id.toString();
         } else {
-            await pgUserRepo.update(
+            id = params.id;
+
+            await this.pgUserRepo.update(
                 {
                     id: parseInt(params.id),
                 },
@@ -44,5 +48,7 @@ export class PgUserAccountRepository implements ILoadUserAccountRepository {
                 },
             );
         }
+
+        return { id };
     }
 }
