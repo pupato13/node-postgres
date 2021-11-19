@@ -27,10 +27,22 @@ export class PgUserAccountRepository implements ILoadUserAccountRepository {
     ): Promise<void> {
         const pgUserRepo = getRepository(PgUser);
 
-        await pgUserRepo.save({
-            name: params.name,
-            email: params.email,
-            facebookId: params.facebookId,
-        });
+        if (params.id === undefined) {
+            await pgUserRepo.save({
+                name: params.name,
+                email: params.email,
+                facebookId: params.facebookId,
+            });
+        } else {
+            await pgUserRepo.update(
+                {
+                    id: parseInt(params.id),
+                },
+                {
+                    name: params.name,
+                    facebookId: params.facebookId,
+                },
+            );
+        }
     }
 }
