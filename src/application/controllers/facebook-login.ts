@@ -10,7 +10,7 @@ import {
 import { RequiredFieldError } from "@/application/errors";
 
 type HttpRequest = {
-    token: string | undefined | null;
+    token: string;
 };
 
 type Model =
@@ -26,8 +26,10 @@ export class FacebookLoginController {
 
     async handle(httpRequest: HttpRequest): Promise<HttpResponse<Model>> {
         try {
-            if (!httpRequest.token) {
-                return badRequest(new RequiredFieldError("token"));
+            const error = this.validate(httpRequest);
+
+            if (!!error) {
+                return badRequest(error);
             }
 
             const accessToken = await this.facebookAuthentication.perform({
@@ -41,6 +43,12 @@ export class FacebookLoginController {
             return unauthorized();
         } catch (error: any) {
             return serverError(error);
+        }
+    }
+
+    private validate(httpRequest: HttpRequest): Error | undefined {
+        if (!httpRequest.token) {
+            return new RequiredFieldError("token");
         }
     }
 }
