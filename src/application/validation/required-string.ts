@@ -7,6 +7,6 @@ export class RequiredStringValidator {
     ) {}
 
     validate(): Error | undefined {
-        return new RequiredFieldError("any_field");
+        if (!this.value) return new RequiredFieldError(this.fieldName);
     }
 }
