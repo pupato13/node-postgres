@@ -2,18 +2,18 @@
     "name": "postgres",
     "version": "0.0.1",
     "description": "",
-    "main": "index.js",
-    "type": "module",
     "scripts": {
         "start": "node dist/main/api",
+        "clean": "rimraf dist",
         "build": "rimraf dist && tsc -p tsconfig-build.json",
+        "prepare": "husky install",
         "lint": "eslint .",
         "lint:fix": "npm run lint -- --fix",
         "test": "jest --passWithNoTests --no-cache --runInBand",
         "test:watch": "npm test -- --watch",
         "test:staged": "npm test -- --findRelatedTests",
         "test:coverage": "npm test -- --coverage",
-        "prepare": "husky install"
+        "test:fb-api": "npm test -- -c ./jest.integration.config.js tests/external/facebook-api.test.ts"
     },
     "repository": {
         "type": "git",
