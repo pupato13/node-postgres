@@ -23,19 +23,19 @@ export class FacebookApi implements ILoadFacebookUserApi {
     constructor(
         private readonly httpClient: IHttpGetClient,
         private readonly clientId: string,
-        private readonly clientSecret: string,
+        private readonly clientSecret: string
     ) {}
 
     async loadUser(
-        params: ILoadFacebookUserApi.Params,
+        params: ILoadFacebookUserApi.Params
     ): Promise<ILoadFacebookUserApi.Result> {
-        const userInfo = await this.getUserInfo(params.token);
-
-        return {
-            name: userInfo.name,
-            email: userInfo.email,
-            facebookId: userInfo.id,
-        };
+        return this.getUserInfo(params.token)
+            .then((userInfo) => ({
+                name: userInfo.name,
+                email: userInfo.email,
+                facebookId: userInfo.id,
+            }))
+            .catch(() => undefined);
     }
 
     private async getAppToken(): Promise<AppToken> {
