@@ -1,28 +1,21 @@
-import { IFacebookAuthentication } from "@/domain/features";
 import { AccessToken } from "@/domain/entities";
+import { FacebookAuthentication } from "@/domain/use-cases";
 import { HttpResponse, ok, unauthorized } from "@/application/helpers";
 import { IValidator, ValidationBuilder } from "@/application/validation";
 import { Controller } from "@/application/controllers";
 
-type HttpRequest = {
-    token: string;
-};
-
-type Model =
-    | Error
-    | {
-          accessToken: string;
-      };
+type HttpRequest = { token: string };
+type Model = Error | { accessToken: string };
 
 export class FacebookLoginController extends Controller {
     constructor(
-        private readonly facebookAuthentication: IFacebookAuthentication
+        private readonly facebookAuthentication: FacebookAuthentication
     ) {
         super();
     }
 
     async perform({ token }: HttpRequest): Promise<HttpResponse<Model>> {
-        const accessToken = await this.facebookAuthentication.perform({
+        const accessToken = await this.facebookAuthentication({
             token,
         });
 

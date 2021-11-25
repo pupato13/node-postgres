@@ -5,34 +5,33 @@ import {
 } from "@/domain/contracts/repos";
 import { ITokenGenerator } from "@/domain/contracts/crypto";
 import { AuthenticationError } from "@/domain/entities/errors";
-import { IFacebookAuthentication } from "@/domain/features";
 import { AccessToken, FacebookAccount } from "@/domain/entities";
 
-export class FacebookAuthenticationUseCase implements IFacebookAuthentication {
-    constructor(
-        private readonly facebookApi: ILoadFacebookUserApi,
-        private readonly userAccountRepo: ILoadUserAccountRepository &
-            ISaveFacebookAccountRepository,
-        private readonly crypto: ITokenGenerator
-    ) {}
+type Setup = (
+    facebookApi: ILoadFacebookUserApi,
+    userAccountRepo: ILoadUserAccountRepository &
+        ISaveFacebookAccountRepository,
+    crypto: ITokenGenerator
+) => FacebookAuthentication;
 
-    async perform(
-        params: IFacebookAuthentication.Params
-    ): Promise<IFacebookAuthentication.Result> {
-        const fbData = await this.facebookApi.loadUser(params);
+export type FacebookAuthentication = (params: {
+    token: string;
+}) => Promise<AccessToken | AuthenticationError>;
+
+export const setupFacebookAuthentication: Setup =
+    (facebookApi, userAccountRepo, crypto) => async (params) => {
+        const fbData = await facebookApi.loadUser(params);
 
         if (fbData !== undefined) {
-            const accountData = await this.userAccountRepo.load({
+            const accountData = await userAccountRepo.load({
                 email: fbData.email,
             });
 
             const fbAccount = new FacebookAccount(fbData, accountData);
 
-            const { id } = await this.userAccountRepo.saveWithFacebook(
-                fbAccount
-            );
+            const { id } = await userAccountRepo.saveWithFacebook(fbAccount);
 
-            const token = await this.crypto.generateToken({
+            const token = await crypto.generateToken({
                 key: id,
                 expirationInMs: AccessToken.expirationInMs,
             });
@@ -41,5 +40,4 @@ export class FacebookAuthenticationUseCase implements IFacebookAuthentication {
         }
 
         return new AuthenticationError();
-    }
-}
+    };
