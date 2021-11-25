@@ -3,9 +3,9 @@
     "version": "0.0.1",
     "description": "",
     "scripts": {
-        "start": "node dist/main/api",
+        "start": "node dist/main/server.js",
         "clean": "rimraf dist",
-        "build": "rimraf dist && tsc -p tsconfig-build.json",
+        "build": "npm run clean && tsc -p tsconfig-build.json",
         "prepare": "husky install",
         "lint": "eslint .",
         "lint:fix": "npm run lint -- --fix",
@@ -28,6 +28,8 @@
     "homepage": "https://github.com/pupato13/node-postgres#readme",
     "devDependencies": {
         "@types/axios": "^0.14.0",
+        "@types/cors": "^2.8.12",
+        "@types/express": "^4.17.13",
         "@types/jest": "^27.0.2",
         "@types/jsonwebtoken": "^8.5.6",
         "@types/module-alias": "^2.0.1",
@@ -51,6 +53,8 @@
     },
     "dependencies": {
         "axios": "^0.24.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
         "jsonwebtoken": "^8.5.1",
         "module-alias": "^2.2.2",
         "pg": "^8.7.1",
