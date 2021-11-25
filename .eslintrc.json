@@ -17,6 +17,7 @@
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/return-await": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
-        "no-extra-boolean-cast": "off"
+        "no-extra-boolean-cast": "off",
+        "@typescript-eslint/brace-style": "off"
     }
 }

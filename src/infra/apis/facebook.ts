@@ -17,6 +17,9 @@ type UserInfo = {
     email: string;
 };
 
+type Params = ILoadFacebookUserApi.Params;
+type Result = ILoadFacebookUserApi.Result;
+
 export class FacebookApi implements ILoadFacebookUserApi {
     private readonly baseUrl = "https://graph.facebook.com";
 
@@ -26,10 +29,8 @@ export class FacebookApi implements ILoadFacebookUserApi {
         private readonly clientSecret: string
     ) {}
 
-    async loadUser(
-        params: ILoadFacebookUserApi.Params
-    ): Promise<ILoadFacebookUserApi.Result> {
-        return this.getUserInfo(params.token)
+    async loadUser({ token }: Params): Promise<Result> {
+        return this.getUserInfo(token)
             .then((userInfo) => ({
                 name: userInfo.name,
                 email: userInfo.email,

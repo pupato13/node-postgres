@@ -6,13 +6,18 @@ import {
 } from "@/data/contracts/repos";
 import { PgUser } from "@/infra/postgres/entities";
 
-export class PgUserAccountRepository implements ILoadUserAccountRepository, ISaveFacebookAccountRepository {
+type LoadParams = ILoadUserAccountRepository.Params;
+type LoadResult = ILoadUserAccountRepository.Result;
+type SaveParams = ISaveFacebookAccountRepository.Params;
+type SaveResult = ISaveFacebookAccountRepository.Result;
+
+export class PgUserAccountRepository
+    implements ILoadUserAccountRepository, ISaveFacebookAccountRepository
+{
     private readonly pgUserRepo = getRepository(PgUser);
 
-    async load(
-        params: ILoadUserAccountRepository.Params,
-    ): Promise<ILoadUserAccountRepository.Result> {
-        const pgUser = await this.pgUserRepo.findOne({ email: params.email });
+    async load({ email }: LoadParams): Promise<LoadResult> {
+        const pgUser = await this.pgUserRepo.findOne({ email });
 
         if (pgUser !== undefined) {
             return {
@@ -22,33 +27,36 @@ export class PgUserAccountRepository implements ILoadUserAccountRepository, ISav
         }
     }
 
-    async saveWithFacebook(
-        params: ISaveFacebookAccountRepository.Params,
-    ): Promise<ISaveFacebookAccountRepository.Result> {
-        let id: string;
+    async saveWithFacebook({
+        id,
+        name,
+        email,
+        facebookId,
+    }: SaveParams): Promise<SaveResult> {
+        let resultId: string;
 
-        if (params.id === undefined) {
+        if (id === undefined) {
             const pgUser = await this.pgUserRepo.save({
-                name: params.name,
-                email: params.email,
-                facebookId: params.facebookId,
+                name,
+                email,
+                facebookId,
             });
 
-            id = pgUser.id.toString();
+            resultId = pgUser.id.toString();
         } else {
-            id = params.id;
+            resultId = id;
 
             await this.pgUserRepo.update(
                 {
-                    id: parseInt(params.id),
+                    id: parseInt(id),
                 },
                 {
-                    name: params.name,
-                    facebookId: params.facebookId,
-                },
+                    name,
+                    facebookId,
+                }
             );
         }
 
-        return { id };
+        return { id: resultId };
     }
 }
