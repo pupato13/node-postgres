@@ -1,5 +1,5 @@
 import { IFacebookAuthentication } from "@/domain/features";
-import { AccessToken } from "@/domain/models";
+import { AccessToken } from "@/domain/entities";
 import { HttpResponse, ok, unauthorized } from "@/application/helpers";
 import { IValidator, ValidationBuilder } from "@/application/validation";
 import { Controller } from "@/application/controllers";

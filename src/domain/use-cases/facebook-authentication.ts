@@ -4,11 +4,11 @@ import {
     ILoadUserAccountRepository,
 } from "@/domain/contracts/repos";
 import { ITokenGenerator } from "@/domain/contracts/crypto";
-import { AuthenticationError } from "@/domain/errors";
+import { AuthenticationError } from "@/domain/entities/errors";
 import { IFacebookAuthentication } from "@/domain/features";
-import { AccessToken, FacebookAccount } from "@/domain/models";
+import { AccessToken, FacebookAccount } from "@/domain/entities";
 
-export class FacebookAuthenticationService implements IFacebookAuthentication {
+export class FacebookAuthenticationUseCase implements IFacebookAuthentication {
     constructor(
         private readonly facebookApi: ILoadFacebookUserApi,
         private readonly userAccountRepo: ILoadUserAccountRepository &
