@@ -1,6 +1,6 @@
 import { sign } from "jsonwebtoken";
 
-import { ITokenGenerator } from "@/data/contracts/crypto";
+import { ITokenGenerator } from "@/domain/contracts/crypto";
 
 type Params = ITokenGenerator.Params;
 type Result = ITokenGenerator.Result;

@@ -1,9 +1,9 @@
-import { ILoadFacebookUserApi } from "@/data/contracts/apis";
+import { ILoadFacebookUserApi } from "@/domain/contracts/apis";
 import {
     ISaveFacebookAccountRepository,
     ILoadUserAccountRepository,
-} from "@/data/contracts/repos";
-import { ITokenGenerator } from "@/data/contracts/crypto";
+} from "@/domain/contracts/repos";
+import { ITokenGenerator } from "@/domain/contracts/crypto";
 import { AuthenticationError } from "@/domain/errors";
 import { IFacebookAuthentication } from "@/domain/features";
 import { AccessToken, FacebookAccount } from "@/domain/models";

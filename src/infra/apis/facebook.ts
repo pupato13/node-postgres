@@ -1,5 +1,5 @@
 import { IHttpGetClient } from "@/infra/http";
-import { ILoadFacebookUserApi } from "@/data/contracts/apis";
+import { ILoadFacebookUserApi } from "@/domain/contracts/apis";
 
 type AppToken = {
     access_token: string;
