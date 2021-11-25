@@ -4,9 +4,8 @@ import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { app } from "@/main/config/app";
 import { env } from "@/main/config/env";
-import { config } from "@/infra/postgres/helpers";
 
-createConnection(config)
+createConnection()
     .then(() =>
         app.listen(env.port, () =>
             console.log(`Server running at http://localhost:${env.port}`)
