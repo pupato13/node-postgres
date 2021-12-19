@@ -88,14 +88,12 @@ describe("JwtTokenHandler", () => {
             expect(generatedKey).toBe(key);
         });
 
-        it("should rethrows if verify throws", async () => {
-            fakeJwt.verify.mockImplementationOnce(() => {
-                throw new Error("key_error");
-            });
+        it("should throws if verify returns falsy", async () => {
+            fakeJwt.verify.mockImplementationOnce(() => null);
 
             const promise = sut.validateToken({ token });
 
-            await expect(promise).rejects.toThrow(new Error("key_error"));
+            await expect(promise).rejects.toThrow();
         });
     });
 });
