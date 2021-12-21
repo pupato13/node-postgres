@@ -11,7 +11,12 @@ const adaptExpressMiddleware: Adapter =
             ...req.headers,
         });
 
-        res.status(statusCode).json(data);
+        if (statusCode === 200) {
+            req.locals = { ...req.locals, ...data };
+            next();
+        } else {
+            res.status(statusCode).json(data);
+        }
     };
 
 interface IMiddleware {
@@ -31,8 +36,8 @@ describe("ExpressMiddleware", () => {
         next = getMockRes().next;
         middleware = mock<IMiddleware>();
         middleware.handle.mockResolvedValue({
-            statusCode: 500,
-            data: { error: "any_error" },
+            statusCode: 200,
+            data: { data: "any_data" },
         });
     });
 
@@ -57,11 +62,23 @@ describe("ExpressMiddleware", () => {
     });
 
     it("should respond with correct error and statusCode", async () => {
+        middleware.handle.mockResolvedValueOnce({
+            statusCode: 500,
+            data: { error: "any_error" },
+        });
+
         await sut(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.status).toHaveBeenCalledTimes(1);
         expect(res.json).toHaveBeenCalledWith({ error: "any_error" });
         expect(res.json).toHaveBeenCalledTimes(1);
+    });
+
+    it("should add data to req.locals", async () => {
+        await sut(req, res, next);
+
+        expect(req.locals).toEqual({ data: "any_data" });
+        expect(next).toHaveBeenCalledTimes(1);
     });
 });
