@@ -12,7 +12,9 @@ const adaptExpressMiddleware: Adapter =
         });
 
         if (statusCode === 200) {
-            req.locals = { ...req.locals, ...data };
+            const entries = Object.entries(data).filter((entry) => !!entry[1]);
+
+            req.locals = { ...req.locals, ...Object.fromEntries(entries) };
             next();
         } else {
             res.status(statusCode).json(data);
@@ -37,7 +39,12 @@ describe("ExpressMiddleware", () => {
         middleware = mock<IMiddleware>();
         middleware.handle.mockResolvedValue({
             statusCode: 200,
-            data: { data: "any_data" },
+            data: {
+                emptyProps: "",
+                nullProp: null,
+                undefinedProp: undefined,
+                prop: "any_value",
+            },
         });
     });
 
@@ -76,9 +83,19 @@ describe("ExpressMiddleware", () => {
     });
 
     it("should add data to req.locals", async () => {
+        middleware.handle.mockResolvedValueOnce({
+            statusCode: 200,
+            data: {
+                emptyProps: "",
+                nullProp: null,
+                undefinedProp: undefined,
+                prop: "any_value",
+            },
+        });
+
         await sut(req, res, next);
 
-        expect(req.locals).toEqual({ data: "any_data" });
+        expect(req.locals).toEqual({ prop: "any_value" });
         expect(next).toHaveBeenCalledTimes(1);
     });
 });
