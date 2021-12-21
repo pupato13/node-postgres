@@ -17,11 +17,11 @@ type Setup = (
 type Input = { token: string };
 type Output = { accessToken: string };
 
-export type FacebookAuthentication = (params: Input) => Promise<Output>;
+export type FacebookAuthentication = (input: Input) => Promise<Output>;
 
 export const setupFacebookAuthentication: Setup =
-    (facebookApi, userAccountRepo, crypto) => async (params) => {
-        const fbData = await facebookApi.loadUser(params);
+    (facebookApi, userAccountRepo, crypto) => async (input) => {
+        const fbData = await facebookApi.loadUser(input);
 
         if (fbData !== undefined) {
             const accountData = await userAccountRepo.load({

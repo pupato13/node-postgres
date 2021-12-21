@@ -1,28 +1,28 @@
 export interface ITokenGenerator {
     generateToken: (
-        params: ITokenGenerator.Params
-    ) => Promise<ITokenGenerator.Result>;
+        input: ITokenGenerator.Input
+    ) => Promise<ITokenGenerator.Output>;
 }
 
 export namespace ITokenGenerator {
-    export type Params = {
+    export type Input = {
         key: string;
         expirationInMs: number;
     };
 
-    export type Result = string;
+    export type Output = string;
 }
 
 export interface ITokenValidator {
     validateToken: (
-        params: ITokenValidator.Params
-    ) => Promise<ITokenValidator.Result>;
+        input: ITokenValidator.Input
+    ) => Promise<ITokenValidator.Output>;
 }
 
 export namespace ITokenValidator {
-    export type Params = {
+    export type Input = {
         token: string;
     };
 
-    export type Result = string;
+    export type Output = string;
 }

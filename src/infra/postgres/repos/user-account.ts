@@ -6,15 +6,15 @@ import {
 } from "@/domain/contracts/repos";
 import { PgUser } from "@/infra/postgres/entities";
 
-type LoadParams = ILoadUserAccountRepository.Params;
-type LoadResult = ILoadUserAccountRepository.Result;
-type SaveParams = ISaveFacebookAccountRepository.Params;
-type SaveResult = ISaveFacebookAccountRepository.Result;
+type LoadInput = ILoadUserAccountRepository.Input;
+type LoadOutput = ILoadUserAccountRepository.Output;
+type SaveInput = ISaveFacebookAccountRepository.Input;
+type SaveOutput = ISaveFacebookAccountRepository.Output;
 
 export class PgUserAccountRepository
     implements ILoadUserAccountRepository, ISaveFacebookAccountRepository
 {
-    async load({ email }: LoadParams): Promise<LoadResult> {
+    async load({ email }: LoadInput): Promise<LoadOutput> {
         const pgUserRepo = getRepository(PgUser);
         const pgUser = await pgUserRepo.findOne({ email });
 
@@ -31,7 +31,7 @@ export class PgUserAccountRepository
         name,
         email,
         facebookId,
-    }: SaveParams): Promise<SaveResult> {
+    }: SaveInput): Promise<SaveOutput> {
         let resultId: string;
         const pgUserRepo = getRepository(PgUser);
 
