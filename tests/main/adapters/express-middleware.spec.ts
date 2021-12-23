@@ -1,29 +1,8 @@
-import { HttpResponse } from "@/application/helpers";
 import { getMockReq, getMockRes } from "@jest-mock/express";
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { mock, MockProxy } from "jest-mock-extended";
-
-type Adapter = (middleware: IMiddleware) => RequestHandler;
-
-const adaptExpressMiddleware: Adapter =
-    (middleware) => async (req, res, next) => {
-        const { statusCode, data } = await middleware.handle({
-            ...req.headers,
-        });
-
-        if (statusCode === 200) {
-            const entries = Object.entries(data).filter((entry) => !!entry[1]);
-
-            req.locals = { ...req.locals, ...Object.fromEntries(entries) };
-            next();
-        } else {
-            res.status(statusCode).json(data);
-        }
-    };
-
-interface IMiddleware {
-    handle: (httpRequest: any) => Promise<HttpResponse>;
-}
+import { IMiddleware } from "@/application/middlewares";
+import { adaptExpressMiddleware } from "@/main/adapters";
 
 describe("ExpressMiddleware", () => {
     let req: Request;
@@ -71,7 +50,7 @@ describe("ExpressMiddleware", () => {
     it("should respond with correct error and statusCode", async () => {
         middleware.handle.mockResolvedValueOnce({
             statusCode: 500,
-            data: { error: "any_error" },
+            data: new Error("any_error"),
         });
 
         await sut(req, res, next);
@@ -82,17 +61,7 @@ describe("ExpressMiddleware", () => {
         expect(res.json).toHaveBeenCalledTimes(1);
     });
 
-    it("should add data to req.locals", async () => {
-        middleware.handle.mockResolvedValueOnce({
-            statusCode: 200,
-            data: {
-                emptyProps: "",
-                nullProp: null,
-                undefinedProp: undefined,
-                prop: "any_value",
-            },
-        });
-
+    it("should add valid to req.locals", async () => {
         await sut(req, res, next);
 
         expect(req.locals).toEqual({ prop: "any_value" });

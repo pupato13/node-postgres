@@ -31,7 +31,7 @@ describe("JwtTokenHandler", () => {
         });
 
         it("should call sign with correct input", async () => {
-            await sut.generateToken({
+            await sut.generate({
                 key,
                 expirationInMs,
             });
@@ -43,7 +43,7 @@ describe("JwtTokenHandler", () => {
         });
 
         it("should return a token", async () => {
-            const generatedToken = await sut.generateToken({
+            const generatedToken = await sut.generate({
                 key,
                 expirationInMs,
             });
@@ -56,7 +56,7 @@ describe("JwtTokenHandler", () => {
                 throw new Error("token_error");
             });
 
-            const promise = sut.generateToken({
+            const promise = sut.generate({
                 key,
                 expirationInMs,
             });
@@ -76,14 +76,14 @@ describe("JwtTokenHandler", () => {
         });
 
         it("should call sign with correct input", async () => {
-            await sut.validateToken({ token });
+            await sut.validate({ token });
 
             expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret);
             expect(fakeJwt.verify).toHaveBeenCalledTimes(1);
         });
 
         it("should return the key used to sign", async () => {
-            const generatedKey = await sut.validateToken({ token });
+            const generatedKey = await sut.validate({ token });
 
             expect(generatedKey).toBe(key);
         });
@@ -91,7 +91,7 @@ describe("JwtTokenHandler", () => {
         it("should throws if verify returns falsy", async () => {
             fakeJwt.verify.mockImplementationOnce(() => null);
 
-            const promise = sut.validateToken({ token });
+            const promise = sut.validate({ token });
 
             await expect(promise).rejects.toThrow();
         });

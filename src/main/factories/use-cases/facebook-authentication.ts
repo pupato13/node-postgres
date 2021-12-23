@@ -1,6 +1,8 @@
-import { makeFacebookApi } from "@/main/factories/apis";
+import {
+    makeFacebookApi,
+    makeJwtTokenHandler,
+} from "@/main/factories/gateways";
 import { makePgUserAccountRepo } from "@/main/factories/repos";
-import { makeJwtTokenHandler } from "@/main/factories/crypto";
 import {
     setupFacebookAuthentication,
     FacebookAuthentication,

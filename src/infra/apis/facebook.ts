@@ -1,5 +1,5 @@
 import { IHttpGetClient } from "@/infra/http";
-import { ILoadFacebookUserApi } from "@/domain/contracts/apis";
+import { ILoadFacebookUser } from "@/domain/contracts/gateways";
 
 type AppToken = {
     access_token: string;
@@ -17,10 +17,10 @@ type UserInfo = {
     email: string;
 };
 
-type Input = ILoadFacebookUserApi.Input;
-type Output = ILoadFacebookUserApi.Output;
+type Input = ILoadFacebookUser.Input;
+type Output = ILoadFacebookUser.Output;
 
-export class FacebookApi implements ILoadFacebookUserApi {
+export class FacebookApi implements ILoadFacebookUser {
     private readonly baseUrl = "https://graph.facebook.com";
 
     constructor(
