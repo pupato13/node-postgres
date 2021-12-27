@@ -1,4 +1,4 @@
-import { IHttpGetClient } from "@/infra/http";
+import { IHttpGetClient } from "@/infra/gateways";
 import { ILoadFacebookUser } from "@/domain/contracts/gateways";
 
 type AppToken = {
@@ -26,12 +26,12 @@ export class FacebookApi implements ILoadFacebookUser {
     constructor(
         private readonly httpClient: IHttpGetClient,
         private readonly clientId: string,
-        private readonly clientSecret: string
+        private readonly clientSecret: string,
     ) {}
 
     async loadUser({ token }: Input): Promise<Output> {
         return this.getUserInfo(token)
-            .then((userInfo) => ({
+            .then(userInfo => ({
                 name: userInfo.name,
                 email: userInfo.email,
                 facebookId: userInfo.id,

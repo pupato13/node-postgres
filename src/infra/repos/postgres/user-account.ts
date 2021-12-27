@@ -4,7 +4,7 @@ import {
     ILoadUserAccount,
     ISaveFacebookAccount,
 } from "@/domain/contracts/repos";
-import { PgUser } from "@/infra/postgres/entities";
+import { PgUser } from "@/infra/repos/postgres/entities";
 
 type LoadInput = ILoadUserAccount.Input;
 type LoadOutput = ILoadUserAccount.Output;
@@ -53,7 +53,7 @@ export class PgUserAccountRepository
                 {
                     name,
                     facebookId,
-                }
+                },
             );
         }
 

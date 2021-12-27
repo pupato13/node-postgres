@@ -1,5 +1,4 @@
-import { FacebookApi } from "@/infra/apis";
-import { AxiosHttpClient } from "@/infra/http";
+import { FacebookApi, AxiosHttpClient } from "@/infra/gateways";
 import { env } from "@/main/config/env";
 
 describe("Facebook API Integration Tests", () => {
@@ -11,7 +10,7 @@ describe("Facebook API Integration Tests", () => {
         sut = new FacebookApi(
             axiosClient,
             env.facebookApi.clientId,
-            env.facebookApi.clientSecret
+            env.facebookApi.clientSecret,
         );
     });
 

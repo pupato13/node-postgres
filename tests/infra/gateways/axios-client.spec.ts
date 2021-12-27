@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { AxiosHttpClient } from "@/infra/http";
+import { AxiosHttpClient } from "@/infra/gateways";
 
 // Mocking axios to not do real requests on it
 jest.mock("axios");
