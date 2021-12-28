@@ -59,12 +59,22 @@ describe("ChangeProfilePicture", () => {
         await sut({ id: "any_id", file });
 
         expect(userProfileRepo.savePicture).toHaveBeenCalledWith(
-            mocked(UserProfile).mock.instances[0]
+            mocked(UserProfile).mock.instances[0],
+        );
+        expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
+    });
+
+    it("should call SaveUserPicture with correct input", async () => {
+        await sut({ id: "any_id", file });
+
+        expect(userProfileRepo.savePicture).toHaveBeenCalledWith(
+            mocked(UserProfile).mock.instances[0],
         );
         expect(userProfileRepo.savePicture).toHaveBeenCalledTimes(1);
     });
 
     it("should call LoadUserProfile with correct input", async () => {
+        userProfileRepo.load.mockResolvedValueOnce(undefined);
         await sut({ id: "any_id", file: undefined });
 
         expect(userProfileRepo.load).toHaveBeenCalledWith({
@@ -80,7 +90,7 @@ describe("ChangeProfilePicture", () => {
     });
 
     it("should return correct data on success", async () => {
-        mocked(UserProfile).mockImplementationOnce((id) => ({
+        mocked(UserProfile).mockImplementationOnce(id => ({
             setPicture: jest.fn(),
             id: "any_id",
             pictureUrl: "any_url",

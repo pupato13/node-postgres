@@ -19,5 +19,5 @@ export namespace ILoadUserProfile {
         id: string;
     };
 
-    export type Output = { name?: string };
+    export type Output = { name?: string } | undefined;
 }

@@ -9,7 +9,7 @@ import { UserProfile } from "@/domain/entities";
 type Setup = (
     fileStorage: IUploadFile & IDeleteFile,
     crypto: IUUIDGenerator,
-    userProfileRepo: ISaveUserPicture & ILoadUserProfile
+    userProfileRepo: ISaveUserPicture & ILoadUserProfile,
 ) => ChangeProfilePicture;
 type Input = {
     id: string;
@@ -33,7 +33,7 @@ export const setupChangeProfilePicture: Setup =
                     : undefined,
             name:
                 file === undefined
-                    ? (await userProfileRepo.load({ id })).name
+                    ? (await userProfileRepo.load({ id }))?.name
                     : undefined,
         };
 
