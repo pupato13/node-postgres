@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 
-import { ISaveUserPicture } from "@/domain/contracts/repos";
+import { ILoadUserProfile, ISaveUserPicture } from "@/domain/contracts/repos";
 import { PgUser } from "@/infra/repos/postgres/entities";
 
 export class PgUserProfileRepository implements ISaveUserPicture {
@@ -17,5 +17,16 @@ export class PgUserProfileRepository implements ISaveUserPicture {
                 initials,
             },
         );
+    }
+
+    async load({
+        id,
+    }: ILoadUserProfile.Input): Promise<ILoadUserProfile.Output> {
+        const pgUserRepo = getRepository(PgUser);
+        const pgUser = await pgUserRepo.findOne({ id: parseInt(id) });
+
+        if (!!pgUser) {
+            return { name: pgUser.name };
+        }
     }
 }
