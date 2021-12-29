@@ -5,7 +5,9 @@ type HttpRequest = { file: { buffer: Buffer; mimeType: string } };
 type Model = Error;
 
 class SavePictureController {
-    async handle({ file }: HttpRequest): Promise<HttpResponse<Model>> {
+    async handle({
+        file,
+    }: HttpRequest): Promise<HttpResponse<Model> | undefined> {
         if (file === undefined || file === null) {
             return badRequest(new RequiredFieldError("file"));
         }
@@ -14,7 +16,9 @@ class SavePictureController {
             return badRequest(new RequiredFieldError("file"));
         }
 
-        return badRequest(new InvalidMimeTypeError(["png", "jpg", "jpeg"]));
+        if (!["image/png", "image/jpg", "image/jpeg"].includes(file.mimeType)) {
+            return badRequest(new InvalidMimeTypeError(["png", "jpg", "jpeg"]));
+        }
     }
 }
 
@@ -74,6 +78,39 @@ describe("SavePictureController", () => {
         });
 
         expect(httpResponse).toEqual({
+            statusCode: 400,
+            data: new InvalidMimeTypeError(["png", "jpg", "jpeg"]),
+        });
+    });
+
+    it("should not return 400 if file type is valid (png)", async () => {
+        const httpResponse = await sut.handle({
+            file: { buffer, mimeType: "image/png" },
+        });
+
+        expect(httpResponse).not.toEqual({
+            statusCode: 400,
+            data: new InvalidMimeTypeError(["png", "jpg", "jpeg"]),
+        });
+    });
+
+    it("should not return 400 if file type is valid (jpg)", async () => {
+        const httpResponse = await sut.handle({
+            file: { buffer, mimeType: "image/jpg" },
+        });
+
+        expect(httpResponse).not.toEqual({
+            statusCode: 400,
+            data: new InvalidMimeTypeError(["png", "jpg", "jpeg"]),
+        });
+    });
+
+    it("should not return 400 if file type is valid (jpeg)", async () => {
+        const httpResponse = await sut.handle({
+            file: { buffer, mimeType: "image/jpeg" },
+        });
+
+        expect(httpResponse).not.toEqual({
             statusCode: 400,
             data: new InvalidMimeTypeError(["png", "jpg", "jpeg"]),
         });
