@@ -9,9 +9,24 @@ export class AllowedMimeTypes {
     ) {}
 
     validate(): Error | undefined {
-        if (this.allowed.includes("png") && this.mimeType !== "image/png") {
+        let isValid = false;
+
+        if (this.isPng()) isValid = true;
+        else if (this.isJpg()) isValid = true;
+
+        if (!isValid) {
             return new InvalidMimeTypeError(this.allowed);
         }
+    }
+
+    private isPng(): boolean {
+        return this.allowed.includes("png") && this.mimeType === "image/png";
+    }
+
+    private isJpg(): boolean {
+        return (
+            this.allowed.includes("jpg") && /image\/jpe?g/.test(this.mimeType)
+        );
     }
 }
 
@@ -24,11 +39,27 @@ describe("AllowedMimeTypes", () => {
         expect(error).toEqual(new InvalidMimeTypeError(["png"]));
     });
 
-    it("Should return undefined if value is valid", () => {
+    it("Should return undefined if value is valid (png)", () => {
         const sut = new AllowedMimeTypes(["png"], "image/png");
 
         const error = sut.validate();
 
-        expect(error).toEqual(undefined);
+        expect(error).toBeUndefined();
+    });
+
+    it("Should return undefined if value is valid (jpg)", () => {
+        const sut = new AllowedMimeTypes(["jpg"], "image/jpg");
+
+        const error = sut.validate();
+
+        expect(error).toBeUndefined();
+    });
+
+    it("Should return undefined if value is valid (jpeg)", () => {
+        const sut = new AllowedMimeTypes(["jpg"], "image/jpeg");
+
+        const error = sut.validate();
+
+        expect(error).toBeUndefined();
     });
 });
