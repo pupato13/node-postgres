@@ -1,11 +1,13 @@
 import { Controller } from "@/application/controllers";
-import { badRequest, HttpResponse, ok } from "@/application/helpers";
-import {
-    RequiredFieldError,
-    InvalidMimeTypeError,
-    MaxFileSizeError,
-} from "@/application/errors";
+import { HttpResponse, ok } from "@/application/helpers";
 import { ChangeProfilePicture } from "@/domain/use-cases";
+import {
+    AllowedMimeTypes,
+    IValidator,
+    MaxFileSize,
+    Required,
+    RequiredBuffer,
+} from "@/application/validation";
 
 type HttpRequest = {
     file: { buffer: Buffer; mimeType: string };
@@ -22,27 +24,20 @@ export class SavePictureController extends Controller {
         file,
         userId,
     }: HttpRequest): Promise<HttpResponse<Model>> {
-        if (file === undefined || file === null) {
-            return badRequest(new RequiredFieldError("file"));
-        }
-
-        if (file.buffer.length === 0) {
-            return badRequest(new RequiredFieldError("file"));
-        }
-
-        if (!["image/png", "image/jpg", "image/jpeg"].includes(file.mimeType)) {
-            return badRequest(new InvalidMimeTypeError(["png", "jpg", "jpeg"]));
-        }
-
-        if (file.buffer.length > 5 * 1024 * 1024) {
-            return badRequest(new MaxFileSizeError(5));
-        }
-
         const result = await this.changeProfilePicture({
             id: userId,
             file: file.buffer,
         });
 
         return ok(result);
+    }
+
+    override buildValidators({ file }: HttpRequest): IValidator[] {
+        return [
+            new Required(file, "file"),
+            new RequiredBuffer(file.buffer, "file"),
+            new AllowedMimeTypes(["png", "jpg"], file.mimeType),
+            new MaxFileSize(5, file.buffer),
+        ];
     }
 }
