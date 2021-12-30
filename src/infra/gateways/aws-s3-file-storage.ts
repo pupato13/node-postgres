@@ -5,7 +5,7 @@ export class AWSS3FileStorage implements IUploadFile, IDeleteFile {
     constructor(
         accessKey: string,
         secret: string,
-        private readonly bucket: string,
+        private readonly bucket: string
     ) {
         config.update({
             credentials: {
@@ -16,30 +16,28 @@ export class AWSS3FileStorage implements IUploadFile, IDeleteFile {
     }
 
     async upload({
-        key,
+        fileName,
         file,
     }: IUploadFile.Input): Promise<IUploadFile.Output> {
-        const s3 = new S3();
-        await s3
+        await new S3()
             .putObject({
                 Bucket: this.bucket,
-                Key: key,
+                Key: fileName,
                 Body: file,
                 ACL: "public-read",
             })
             .promise();
 
         return `https://${this.bucket}.s3.amazonaws.com/${encodeURIComponent(
-            key,
+            fileName
         )}`;
     }
 
-    async delete({ key }: IDeleteFile.Input): Promise<void> {
-        const s3 = new S3();
-        await s3
+    async delete({ fileName }: IDeleteFile.Input): Promise<void> {
+        await new S3()
             .deleteObject({
                 Bucket: this.bucket,
-                Key: key,
+                Key: fileName,
             })
             .promise();
     }

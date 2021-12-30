@@ -9,11 +9,11 @@ import { UserProfile } from "@/domain/entities";
 type Setup = (
     fileStorage: IUploadFile & IDeleteFile,
     crypto: IUUIDGenerator,
-    userProfileRepo: ISaveUserPicture & ILoadUserProfile,
+    userProfileRepo: ISaveUserPicture & ILoadUserProfile
 ) => ChangeProfilePicture;
 type Input = {
     id: string;
-    file?: Buffer;
+    file?: { buffer: Buffer; mimeType: string };
 };
 type Output = { pictureUrl?: string; initials?: string };
 export type ChangeProfilePicture = (input: Input) => Promise<Output>;
@@ -27,8 +27,8 @@ export const setupChangeProfilePicture: Setup =
             pictureUrl:
                 file !== undefined
                     ? await fileStorage.upload({
-                          file,
-                          key,
+                          file: file.buffer,
+                          fileName: `${key}.${file.mimeType.split("/")[1]}`,
                       })
                     : undefined,
             name:
@@ -43,7 +43,7 @@ export const setupChangeProfilePicture: Setup =
         try {
             await userProfileRepo.savePicture(userProfile);
         } catch (error) {
-            if (file !== undefined) await fileStorage.delete({ key });
+            if (file !== undefined) await fileStorage.delete({ fileName: key });
             throw error;
         }
 

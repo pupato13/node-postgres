@@ -23,7 +23,7 @@ export class SavePictureController extends Controller {
     }: HttpRequest): Promise<HttpResponse<Model>> {
         const result = await this.changeProfilePicture({
             id: userId,
-            file: file.buffer,
+            file,
         });
 
         return ok(result);
