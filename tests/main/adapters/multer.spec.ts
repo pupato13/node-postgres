@@ -24,6 +24,8 @@ const adaptMulter: RequestHandler = (req, res, next) => {
                 },
             };
         }
+
+        next();
     });
 };
 
@@ -103,5 +105,12 @@ describe("MulterAdapter", () => {
                 mimeType: req.file?.mimetype,
             },
         });
+    });
+
+    it("should call next on success", () => {
+        sut(req, res, next);
+
+        expect(next).toHaveBeenCalledWith();
+        expect(next).toHaveBeenCalledTimes(1);
     });
 });
