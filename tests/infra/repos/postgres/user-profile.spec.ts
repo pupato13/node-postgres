@@ -45,7 +45,7 @@ describe("Pg UserProfileRepository", () => {
         });
     });
 
-    describe("savePicture", () => {
+    describe("load", () => {
         it("should load user profile", async () => {
             const { id } = await pgUserRepo.save({
                 email: "any_email",
@@ -55,6 +55,16 @@ describe("Pg UserProfileRepository", () => {
             const userProfile = await sut.load({ id: id.toString() });
 
             expect(userProfile?.name).toBe("any_name");
+        });
+
+        it("should load user profile", async () => {
+            const { id } = await pgUserRepo.save({
+                email: "any_email",
+            });
+
+            const userProfile = await sut.load({ id: id.toString() });
+
+            expect(userProfile?.name).toBeUndefined();
         });
 
         it("should return undefined", async () => {
