@@ -24,7 +24,7 @@ describe("ChangeProfilePicture", () => {
     let userProfileRepo: MockProxy<ISaveUserPicture & ILoadUserProfile>;
     let sut: ChangeProfilePicture;
 
-    beforeEach(() => {
+    beforeAll(() => {
         uuid = "any_unique_id";
         buffer = Buffer.from("any_buffer");
         mimeType = "image/png";
@@ -32,7 +32,7 @@ describe("ChangeProfilePicture", () => {
         fileStorage = mock();
         fileStorage.upload.mockResolvedValue("any_url");
         crypto = mock();
-        crypto.uuid.mockReturnValueOnce(uuid);
+        crypto.uuid.mockReturnValue(uuid);
         userProfileRepo = mock();
         userProfileRepo.load.mockResolvedValue({
             name: "Diego de Oliveira Pupato",
