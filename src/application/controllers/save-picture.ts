@@ -7,10 +7,10 @@ import {
 } from "@/application/validation";
 
 type HttpRequest = {
-    file: { buffer: Buffer; mimeType: string };
+    file?: { buffer: Buffer; mimeType: string };
     userId: string;
 };
-type Model = Error | { initials?: string; pictureUrl?: string };
+type Model = { initials?: string; pictureUrl?: string };
 
 export class SavePictureController extends Controller {
     constructor(private readonly changeProfilePicture: ChangeProfilePicture) {
@@ -21,15 +21,17 @@ export class SavePictureController extends Controller {
         file,
         userId,
     }: HttpRequest): Promise<HttpResponse<Model>> {
-        const result = await this.changeProfilePicture({
+        const { initials, pictureUrl } = await this.changeProfilePicture({
             id: userId,
             file,
         });
 
-        return ok(result);
+        return ok({ initials, pictureUrl });
     }
 
     override buildValidators({ file }: HttpRequest): IValidator[] {
+        if (file === undefined) return [];
+
         return [
             ...Builder.of({ value: file, fieldName: "file" })
                 .required()
