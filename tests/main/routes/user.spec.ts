@@ -9,26 +9,26 @@ import { env } from "@/main/config/env";
 import { PgUser } from "@/infra/repos/postgres/entities";
 
 describe("User Routes", () => {
+    let backup: IBackup;
+    let pgUserRepo: Repository<PgUser>;
+
+    beforeEach(() => {
+        // Restore the empty DB backup before each test
+        backup.restore();
+        pgUserRepo = getRepository(PgUser);
+    });
+
+    beforeAll(async () => {
+        const db = await makeFakeDb([PgUser]);
+        // Creates a backup with empty DB to restore it before each test
+        backup = db.backup();
+    });
+
+    afterAll(async () => {
+        await getConnection().close();
+    });
+
     describe("DELETE /users/picture", () => {
-        let backup: IBackup;
-        let pgUserRepo: Repository<PgUser>;
-
-        beforeEach(() => {
-            // Restore the empty DB backup before each test
-            backup.restore();
-            pgUserRepo = getRepository(PgUser);
-        });
-
-        beforeAll(async () => {
-            const db = await makeFakeDb([PgUser]);
-            // Creates a backup with empty DB to restore it before each test
-            backup = db.backup();
-        });
-
-        afterAll(async () => {
-            await getConnection().close();
-        });
-
         it("should return 403 if no authorization header is present", async () => {
             const { status } = await request(app).delete("/api/users/picture");
 
@@ -48,6 +48,14 @@ describe("User Routes", () => {
 
             expect(status).toBe(200);
             expect(body).toEqual({ pictureUrl: undefined, initials: "DP" });
+        });
+    });
+
+    describe("PUT /users/picture", () => {
+        it("should return 403 if no authorization header is present", async () => {
+            const { status } = await request(app).put("/api/users/picture");
+
+            expect(status).toBe(403);
         });
     });
 });
