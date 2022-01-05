@@ -1,6 +1,7 @@
 import { mocked } from "ts-jest/utils";
 import { createConnection, getConnectionManager } from "typeorm";
 
+// Add all methods you want to mock as jest.fn() to avoid implement all methods and properties.
 jest.mock("typeorm", () => ({
     Entity: jest.fn(),
     PrimaryGeneratedColumn: jest.fn(),
@@ -30,27 +31,37 @@ export class PgConnection {
 }
 
 describe("PgConnection", () => {
+    let getConnectionManagerSpy: jest.Mock;
+    let createQueryRunnerSpy: jest.Mock;
+    let createConnectionSpy: jest.Mock;
+    let sut: PgConnection;
+
+    beforeAll(() => {
+        // Here you create all methods from 'jest.mock' as Spy to monitor them
+        getConnectionManagerSpy = jest.fn().mockReturnValue({
+            has: jest.fn().mockReturnValue(false),
+        });
+        mocked(getConnectionManager).mockImplementation(
+            getConnectionManagerSpy
+        );
+        createQueryRunnerSpy = jest.fn();
+        createConnectionSpy = jest.fn().mockResolvedValue({
+            createQueryRunner: createQueryRunnerSpy,
+        });
+        mocked(createConnection).mockImplementation(createConnectionSpy);
+    });
+
+    beforeEach(() => {
+        sut = PgConnection.getInstance();
+    });
+
     it("should have only one instance", () => {
-        const sut = PgConnection.getInstance();
         const sut2 = PgConnection.getInstance();
 
         expect(sut).toBe(sut2);
     });
 
     it("should create a new connection", async () => {
-        const getConnectionManagerSpy = jest.fn().mockReturnValueOnce({
-            has: jest.fn().mockReturnValueOnce(false),
-        });
-        const createQueryRunnerSpy = jest.fn();
-        const createConnectionSpy = jest.fn().mockResolvedValueOnce({
-            createQueryRunner: createQueryRunnerSpy,
-        });
-        mocked(createConnection).mockImplementationOnce(createConnectionSpy);
-        mocked(getConnectionManager).mockImplementationOnce(
-            getConnectionManagerSpy
-        );
-        const sut = PgConnection.getInstance();
-
         await sut.connect();
 
         expect(createConnectionSpy).toHaveBeenCalledWith();
