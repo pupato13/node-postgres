@@ -1,31 +1,34 @@
 import request from "supertest";
 import { IBackup } from "pg-mem";
-import { getConnection, getRepository, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { sign } from "jsonwebtoken";
 
 import { makeFakeDb } from "@/tests/infra/repos/postgres/mocks";
 import { app } from "@/main/config/app";
 import { env } from "@/main/config/env";
 import { PgUser } from "@/infra/repos/postgres/entities";
+import { PgConnection } from "@/infra/repos/postgres/helpers";
 
 describe("User Routes", () => {
     let backup: IBackup;
+    let connection: PgConnection;
     let pgUserRepo: Repository<PgUser>;
 
-    beforeEach(() => {
-        // Restore the empty DB backup before each test
-        backup.restore();
-        pgUserRepo = getRepository(PgUser);
-    });
-
     beforeAll(async () => {
+        connection = PgConnection.getInstance();
         const db = await makeFakeDb([PgUser]);
         // Creates a backup with empty DB to restore it before each test
         backup = db.backup();
     });
 
     afterAll(async () => {
-        await getConnection().close();
+        await connection.disconnect();
+    });
+
+    beforeEach(() => {
+        // Restore the empty DB backup before each test
+        backup.restore();
+        pgUserRepo = connection.getRepository(PgUser);
     });
 
     describe("DELETE /users/picture", () => {
