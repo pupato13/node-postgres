@@ -19,6 +19,7 @@ describe("User Routes", () => {
         const db = await makeFakeDb([PgUser]);
         // Creates a backup with empty DB to restore it before each test
         backup = db.backup();
+        pgUserRepo = connection.getRepository(PgUser);
     });
 
     afterAll(async () => {
@@ -28,7 +29,6 @@ describe("User Routes", () => {
     beforeEach(() => {
         // Restore the empty DB backup before each test
         backup.restore();
-        pgUserRepo = connection.getRepository(PgUser);
     });
 
     describe("DELETE /users/picture", () => {
