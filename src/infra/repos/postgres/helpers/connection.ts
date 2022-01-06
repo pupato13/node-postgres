@@ -13,8 +13,9 @@ import {
     ConnectionNotFoundError,
     TransactionNotFoundError,
 } from "@/infra/repos/postgres/helpers";
+import { IDbTransaction } from "@/application/contracts";
 
-export class PgConnection {
+export class PgConnection implements IDbTransaction {
     private static instance?: PgConnection;
     private query?: QueryRunner;
     private connection?: Connection;
