@@ -16,13 +16,12 @@ export class DbTransactionController {
 
             await this.db.commit();
 
-            await this.db.closeTransaction();
-
             return httpResponse;
         } catch (error) {
             await this.db.rollback();
-            await this.db.closeTransaction();
             throw error;
+        } finally {
+            await this.db.closeTransaction();
         }
     }
 }
