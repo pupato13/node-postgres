@@ -1,5 +1,8 @@
-import { makeAWSS3FileStorage, makeUniqueId } from "@/main/factories/gateways";
-import { makePgUserProfileRepo } from "@/main/factories/repos/postgres";
+import {
+    makeAWSS3FileStorage,
+    makeUniqueId,
+} from "@/main/factories/infra/gateways";
+import { makePgUserProfileRepo } from "@/main/factories/infra/repos/postgres";
 import {
     setupChangeProfilePicture,
     ChangeProfilePicture,

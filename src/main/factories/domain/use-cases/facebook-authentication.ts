@@ -1,8 +1,8 @@
 import {
     makeFacebookApi,
     makeJwtTokenHandler,
-} from "@/main/factories/gateways";
-import { makePgUserAccountRepo } from "@/main/factories/repos/postgres";
+} from "@/main/factories/infra/gateways";
+import { makePgUserAccountRepo } from "@/main/factories/infra/repos/postgres";
 import {
     setupFacebookAuthentication,
     FacebookAuthentication,
